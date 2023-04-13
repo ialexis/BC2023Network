@@ -8,7 +8,7 @@ public final class BCNetwork {
         guard let response = response as? HTTPURLResponse else { throw NetworkError.noHTTP }
         if response.statusCode == 200 {
             do {
-                return try JSONDecoder().decode(JSON.self, from: data)
+                return try decoder.decode(JSON.self, from: data)
             } catch {
                 throw NetworkError.json(error)
             }
@@ -17,7 +17,7 @@ public final class BCNetwork {
         }
     }
     
-    public func postJSON<JSON:Codable>(request:URLRequest, json:JSON, statusOK:Int = 200, decoder:JSONDecoder = JSONDecoder()) async throws {
+    public func post(request:URLRequest, statusOK:Int = 200) async throws {
         let (_, response) = try await URLSession.shared.dataRequest(for: request)
         guard let response = response as? HTTPURLResponse else { throw NetworkError.noHTTP }
         if response.statusCode != statusOK {
