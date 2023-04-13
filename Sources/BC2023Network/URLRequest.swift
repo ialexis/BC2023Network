@@ -16,16 +16,22 @@ public enum HTTPMethods:String {
 }
 
 public extension URLRequest {
-    static func get(url:URL) -> URLRequest {
+    static func get(url:URL, token:String? = nil) -> URLRequest {
         var request = URLRequest(url: url)
+        if let token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.httpMethod = HTTPMethods.get.rawValue
         request.timeoutInterval = 30
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         return request
     }
     
-    static func post<JSON:Codable>(url:URL, data:JSON, method:HTTPMethods = .post) -> URLRequest {
+    static func post<JSON:Codable>(url:URL, data:JSON, method:HTTPMethods = .post, token:String? = nil) -> URLRequest {
         var request = URLRequest(url: url)
+        if let token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.httpMethod = method.rawValue
         request.timeoutInterval = 30
         request.setValue("application/json; charset=utf8", forHTTPHeaderField: "Content-Type")
