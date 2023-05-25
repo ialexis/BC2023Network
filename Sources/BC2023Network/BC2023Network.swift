@@ -1,5 +1,10 @@
 import SwiftUI
 
+struct VaporError: Codable {
+    let error: Bool
+    let reason: String
+}
+
 public final class BCNetwork {
     public static let shared = BCNetwork()
     
@@ -22,6 +27,14 @@ public final class BCNetwork {
         guard let response = response as? HTTPURLResponse else { throw NetworkError.noHTTP }
         if response.statusCode != statusOK {
             throw NetworkError.status(response.statusCode)
+        }
+    }
+    
+    public func postV(request:URLRequest, statusOK:Int = 200) async throws {
+        let (data, response) = try await URLSession.shared.dataRequest(for: request)
+        guard let response = response as? HTTPURLResponse else { throw NetworkError.noHTTP }
+        if response.statusCode != statusOK {
+            throw NetworkError.vapor(try JSONDecoder().decode(VaporError.self, from: data).reason)
         }
     }
     
