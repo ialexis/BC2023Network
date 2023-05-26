@@ -15,11 +15,16 @@ public enum HTTPMethods:String {
     case delete = "DELETE"
 }
 
+public enum AuthorizationMethod: String {
+    case token = "Bearer"
+    case basic = "Basic"
+}
+
 public extension URLRequest {
-    static func get(url:URL, token:String? = nil) -> URLRequest {
+    static func get(url:URL, token:String? = nil, authMethod:AuthorizationMethod = .token) -> URLRequest {
         var request = URLRequest(url: url)
         if let token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("\(authMethod.rawValue) \(token)", forHTTPHeaderField: "Authorization")
         }
         request.httpMethod = HTTPMethods.get.rawValue
         request.timeoutInterval = 30
@@ -27,10 +32,11 @@ public extension URLRequest {
         return request
     }
     
-    static func post<JSON:Codable>(url:URL, data:JSON, method:HTTPMethods = .post, token:String? = nil) -> URLRequest {
+    static func post<JSON:Codable>(url:URL, data:JSON, method:HTTPMethods = .post,
+                                   token:String? = nil, authMethod:AuthorizationMethod = .token) -> URLRequest {
         var request = URLRequest(url: url)
         if let token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("\(authMethod.rawValue) \(token)", forHTTPHeaderField: "Authorization")
         }
         request.httpMethod = method.rawValue
         request.timeoutInterval = 30
