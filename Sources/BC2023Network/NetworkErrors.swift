@@ -13,7 +13,7 @@ public enum NetworkError:Error {
     case json(Error)
     case dataNotValid
     case noHTTP
-    case vapor(String)
+    case vapor(String, Int)
     case unknown
     
     public var description:String {
@@ -28,7 +28,7 @@ public enum NetworkError:Error {
             return "Dato no válido"
         case .noHTTP:
             return "No es una conexión HTTP"
-        case .vapor(let reason):
+        case .vapor(let reason, _):
             return reason
         case .unknown:
             return "Error desconocido"
