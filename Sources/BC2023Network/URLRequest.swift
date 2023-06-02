@@ -32,8 +32,9 @@ public extension URLRequest {
         return request
     }
     
-    static func post<JSON:Codable>(url:URL, data:JSON, method:HTTPMethods = .post,
-                                   token:String? = nil, authMethod:AuthorizationMethod = .token) -> URLRequest {
+    static func post<JSON:Codable>(url: URL, data: JSON, method: HTTPMethods = .post,
+                                   token: String? = nil, authMethod: AuthorizationMethod = .token,
+                                   encoder: JSONEncoder = JSONEncoder()) -> URLRequest {
         var request = URLRequest(url: url)
         if let token {
             request.setValue("\(authMethod.rawValue) \(token)", forHTTPHeaderField: "Authorization")
@@ -42,7 +43,7 @@ public extension URLRequest {
         request.timeoutInterval = 30
         request.setValue("application/json; charset=utf8", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.httpBody = try? JSONEncoder().encode(data)
+        request.httpBody = try? encoder.encode(data)
         return request
     }
 }
